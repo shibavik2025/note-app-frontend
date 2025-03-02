@@ -1,101 +1,132 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect } from "react";
+import NoteEditor from "@components/notes/NoteEditor";
+import { Plus } from "lucide-react";
+import SearchBar from "@/app/components/notes/SearchBar";
+import { categoryColors } from "@/app/types/common"; // Make sure this contains the correct color values
+
+interface Note {
+  id?: number;
+  title: string;
+  category: string;
+  content: string;
+  created_at?: string;
+}
+
+export default function NotesPage() {
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [filteredNotes, setFilteredNotes] = useState<Note[]>([]);
+
+  // Fetching notes from the API
+  async function fetchNotes() {
+    setLoading(true);
+    const res = await fetch("http://127.0.0.1:8000/notes");
+    const data = await res.json();
+    setNotes(data);
+    setFilteredNotes(data); // Initially show all notes
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchNotes(); // Fetch notes when the component mounts
+  }, []);
+
+  function refreshNotes() {
+    fetchNotes();
+  }
+
+  // Search handler: filters notes based on the search query and category
+  function handleSearch(query: string, category: string) {
+    const lowercasedQuery = query.toLowerCase();
+
+    const filtered = notes.filter(
+      (note) =>
+        (note.title.toLowerCase().includes(lowercasedQuery) ||
+          note.content.toLowerCase().includes(lowercasedQuery)) &&
+        (category ? note.category === category : true)
+    );
+
+    setFilteredNotes(filtered);
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="flex h-screen bg-gray-50">
+      <div className="w-2/3 p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800">📝 Your Notes</h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* SearchBar component */}
+          <SearchBar onSearch={handleSearch} />
+
+          {/* Add New Note Button */}
+          <button
+            onClick={() => setSelectedNote({ title: "", category: "", content: "" })}
+            className="flex items-center gap-2 bg-emerald-500/80 hover:bg-emerald-500 text-white px-5 py-2 rounded-md shadow"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <Plus size={18} /> Add Note
+          </button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Notes Table */}
+        {loading ? (
+          <p className="text-center text-gray-600">Loading notes...</p>
+        ) : (
+          <div className="overflow-hidden rounded-lg shadow-lg">
+            <table className="w-full border-collapse bg-white rounded-lg">
+              <thead className="bg-gray-200 text-gray-700 uppercase text-sm">
+                <tr>
+                  <th className="px-8 pl-20 py-4 text-left">Title</th>
+                  <th className="px-3 py-3 text-left">Category</th>
+                  <th className="px-3 py-3 text-center">Created At</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredNotes.length > 0 ? (
+                  filteredNotes.map((note) => (
+                    <tr
+                      key={note.id}
+                      className="shadow-sm hover:shadow-md hover:bg-blue-100 cursor-pointer transition"
+                      onClick={() => setSelectedNote(note)}
+                    >
+                      <td className="px-8 pl-20 py-3 text-gray-800 text-left">{note.title}</td>
+                      <td className="px-3 py-3 text-center">
+                        {/* Category circle display */}
+                        <div className="flex items-center justify-left gap-3">
+                          {/* Category Circle */}
+                          <span
+                            className={`inline-block w-5 h-5 rounded-full`}
+                            style={{
+                              backgroundColor: categoryColors[note.category] || "gray", // Use category color or default to gray
+                              border: "1px solid white", 
+                            }}
+                          ></span>
+                          {note.category}
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 text-gray-800 text-center">
+                        {note?.created_at && new Date(note?.created_at).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="px-6 py-3 text-center text-gray-600">
+                      No notes found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {selectedNote && (
+        <NoteEditor note={selectedNote} onClose={() => setSelectedNote(null)} refreshNotes={refreshNotes} />
+      )}
     </div>
   );
 }
