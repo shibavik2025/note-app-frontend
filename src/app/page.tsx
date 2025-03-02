@@ -5,6 +5,7 @@ import NoteEditor from "@components/notes/NoteEditor";
 import { Plus } from "lucide-react";
 import SearchBar from "@/app/components/notes/SearchBar";
 import { categoryColors } from "@/app/types/common"; // Make sure this contains the correct color values
+import { API_URL } from "./utils/common";
 
 interface Note {
   id?: number;
@@ -23,7 +24,7 @@ export default function NotesPage() {
   // Fetching notes from the API
   async function fetchNotes() {
     setLoading(true);
-    const res = await fetch("http://127.0.0.1:8000/notes");
+    const res = await fetch(`${API_URL}/notes`);
     const data = await res.json();
     setNotes(data);
     setFilteredNotes(data); // Initially show all notes

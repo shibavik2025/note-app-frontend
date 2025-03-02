@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Save, Trash2, X } from "lucide-react";
 import { categories } from "@/app/types/common";
 import SentimentComponent from "@components/sentiment/SentimentAnalyze";
+import { API_URL } from "@/app/utils/common";
 
 // Interface for Note object
 interface Note {
@@ -81,8 +82,8 @@ export default function NoteEditor({ note, onClose, refreshNotes }: NoteEditorPr
     console.log("editedNote.content", editedNote.content);
     const method = editedNote.id ? "PUT" : "POST";
     const url = editedNote.id
-      ? `http://127.0.0.1:8000/notes/${editedNote.id}`
-      : `http://127.0.0.1:8000/notes`;
+      ? `${API_URL}/notes/${editedNote.id}`
+      : `${API_URL}/notes`;
 
     await fetch(url, {
       method,
@@ -100,7 +101,7 @@ export default function NoteEditor({ note, onClose, refreshNotes }: NoteEditorPr
   // Delete handler
   async function handleDelete() {
     if (editedNote.id) {
-      await fetch(`http://127.0.0.1:8000/notes/${editedNote.id}`, {
+      await fetch(`${API_URL}/notes/${editedNote.id}`, {
         method: "DELETE",
       });
       refreshNotes();
