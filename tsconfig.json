@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "types": ["jest", "node"],
     "plugins": [
       {
         "name": "next"
@@ -20,11 +21,12 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@hooks/*": ["./src/app/hooks/*"],
       "@types/*": ["./src/app/types/*"],
       "@components/*": ["./src/app/components/*"],
       "@utils/*": ["./src/app/utils/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "babel.config.js"],
   "exclude": ["node_modules"]
 }

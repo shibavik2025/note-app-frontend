@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import { Graph, Node, Edge } from "../../types/knowledgeGraph";
+import { Graph, Node, Edge } from "../../../types/knowledgeGraph";
 import { D3DragEvent } from "d3";
 
 interface KnowledgeGraphProps {

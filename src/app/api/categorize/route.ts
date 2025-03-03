@@ -1,18 +1,21 @@
-// app/api/categorizeApi/route.ts
-
 import { NextResponse } from "next/server";
 import { categorizeText } from "@utils/huggingFaceApi";
+
 export async function POST(req: Request) {
   try {
-    const { content } = await req.json(); // Get the content from the request body
+    const { content } = await req.json();
 
-    // Categorize the text using the utility function
+    // Validate request body
+    if (!content || typeof content !== "string") {
+      return NextResponse.json({ error: "Invalid content provided." }, { status: 400 });
+    }
+
+    // Categorize the text
     const category = await categorizeText(content);
 
-    // Return the category in the response
-    return NextResponse.json({category });
+    return NextResponse.json({ category });
   } catch (error) {
-    console.log("category", error);
+    console.error("Error in categorize API:", error);
     return NextResponse.json({ error: "Failed to categorize the text." }, { status: 500 });
   }
 }

@@ -1,5 +1,3 @@
-// app/api/sentimentApi/route.ts
-
 import { NextResponse } from "next/server";
 import { analyzeSentiment } from "@utils/huggingFaceApi";
 
