@@ -5,9 +5,9 @@ import NotesHeader from "@components/notes/NotesHeader";
 import NotesTable from "@components/notes/NotesTable";
 import NoteEditor from "@/app/components/note-editor/NoteEditor";
 import { useNotes } from "@hooks/useNotes";
-import { Note } from "./types/note";
+import { Note } from "../../types/note";
 
-export default function HomePage() {
+export default function NotesPage() {
   const { filteredNotes, loading, refreshNotes, handleSearch } = useNotes();
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
